@@ -54,24 +54,28 @@ var rendergraph = function() {
 	function calcgraphminmaxvalues(graphlinelist) {
 
 		var minval,
-			maxval;
+			maxval,
+			sumval = 0;
 
 		// init minval/maxval with very first value in our graph lines
 		minval = maxval = graphlinelist[0].data[0];
+		
 
 		for (var i = 0,j = graphlinelist.length;i < j;i++) {
 			var lineminmax = calcgraphlineminmaxvalues(graphlinelist[i]);
 			minval = Math.min(lineminmax.min,minval);
 			maxval = Math.max(lineminmax.max,maxval);
+			sumval += lineminmax.avg;
 		}
 
-		return { min: minval,max: maxval };
+		return { min: minval,max: maxval, avg: sumval / j };
 	}
 
 	function calcgraphlineminmaxvalues(graphline) {
 
 		var minval,
-			maxval;
+			maxval,
+			sumval = 0;
 
 		// init minval/maxval with very first value in our graph lines
 		minval = maxval = graphline.data[0];
@@ -79,9 +83,10 @@ var rendergraph = function() {
 		for (var i = 0,j = graphline.data.length;i < j;i++) {
 			minval = Math.min(graphline.data[i],minval);
 			maxval = Math.max(graphline.data[i],maxval);
+			sumval += graphline.data[i];
 		}
 
-		return { min: minval,max: maxval };
+		return { min: minval,max: maxval, avg: sumval / j };
 	}
 
 	function buildvaluemarkers(axislinesel,canvasheight,ispercentgraph,graphminmax) {
@@ -185,6 +190,7 @@ var rendergraph = function() {
 			detailel.appendChild(labelel);
 			detailel.appendChild(appendminmax('Min',roundto2decplaces(lineminmax.min)));
 			detailel.appendChild(appendminmax('Max',roundto2decplaces(lineminmax.max)));
+			detailel.appendChild(appendminmax('Avg',roundto2decplaces(lineminmax.avg)));
 		}
 
 		// append legend container to graph axis container
